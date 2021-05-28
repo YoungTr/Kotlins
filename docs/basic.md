@@ -136,11 +136,38 @@ fun recognize(c: Char) = when (c) {
 }
 ```
 
+### 扩展函数
 
+```kotlin
+fun <T> Collection<T>.joinToString(separator: String = ", ", prefix: String = "", postfix: String = ""): String {
+    val result = StringBuffer(prefix)
+    for ((index, element) in this.withIndex()) {
+        if (index > 0) result.append(separator)
+        result.append(element)
+    }
 
+    return result.toString()
+}
+```
 
+### 扩展属性
 
+```kotlin
+var StringBuilder.lastChar: Char
+    get() = get(length - 1)
+    set(value: Char) {
+        setCharAt(length - 1, value)
+    }
 
+val String.lastChar: Char
+    get() = get(length - 1)
+```
+
+Java 中调用
+
+```java
+StringUtilKt.getLastChar("Kotlin?");
+```
 
 
 

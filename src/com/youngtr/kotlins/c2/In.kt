@@ -1,3 +1,5 @@
+@file:JvmName("InFunctions")
+
 package com.youngtr.kotlins.c2
 
 fun isLetter(c: Char) = c in 'a'..'z' || c in 'A'..'Z'
