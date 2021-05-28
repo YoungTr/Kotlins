@@ -1,4 +1,4 @@
-package com.youngtr.kotlins
+package com.youngtr.kotlins.c2
 
 class Rectangle(private val height: Int, private val width: Int) {
     val isSquare: Boolean

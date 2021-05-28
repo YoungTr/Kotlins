@@ -73,11 +73,68 @@ fun mixOptimized(c1: Color, c2: Color) =
 
 如果没有给 when 表达式提供参数，分支条件就是任意的布尔表达式。
 
+### 迭代数字：区间和数列
 
+for...in
 
+```kotlin
+fun fizzBuzz(i: Int) =
+        when {
+            i % 15 == 0 -> "FizzBuzz"
+            i % 3 == 0 -> "Fizz"
+            i % 5 == 0 -> "Buzz"
+            else -> "$i "
+        }
 
+fun main() {
+    for (i in 1..100) {
+        println(fizzBuzz(i))
+    }
 
+    for (i in 100 downTo 1 step 2) {
+        println(fizzBuzz(i))
+    }
+}
+```
 
+### 迭代 map
+
+```kotlin
+fun formap() {
+    for (c in 'A'..'F') {
+        val binary = Integer.toBinaryString(c.toInt())
+        binaryReps[c] = binary
+    }
+
+    for ((letter, binary) in binaryReps) {
+        println("$letter = $binary")
+    }
+}
+```
+
+迭代集合使用下标
+
+```kotlin
+fun forlist() {
+    val list = arrayListOf("10", "11", "1001")
+    for ((index, element) in list.withIndex()) {
+        println("$index = $element")
+    }
+}
+```
+
+### 使用 "in" 检查集合和区间的成员
+
+```kotlin
+fun isLetter(c: Char) = c in 'a'..'z' || c in 'A'..'Z'
+fun isNotDig(c: Char) = c !in '0'..'9'
+
+fun recognize(c: Char) = when (c) {
+    in '0'..'9' -> "It's is a digit!"
+    in 'a'..'z', in 'A'..'Z' -> "It's a letter!"
+    else -> "I don't know..."
+}
+```
 
 
 
