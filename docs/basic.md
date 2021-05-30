@@ -169,7 +169,164 @@ Java 中调用
 StringUtilKt.getLastChar("Kotlin?");
 ```
 
+### 密封类
 
+sealed 类，所有的嵌套子类必须嵌套在父类中。sealed 修饰符隐含的这个类是 open 类，不需要显示添加 open 修饰符。
 
+```kotlin
+sealed class Expr {
+    class Num(val value: Int) : Expr()
+    class Sum(val left: Expr, val right: Expr) : Expr()
+}
 
+fun eval(expr: Expr): Int =
+				// “when” 表达式涵盖了所有的可能的情况，
+				// 
+        when (expr) {
+            is Expr.Num -> expr.value
+            is Expr.Sum -> eval(expr.right) + eval(expr.left)
+        }
+```
 
+### 类委托：使用 “by” 关键字
+
+可以使用 by 关键字将接口的实现委托到另一个对象
+
+```kotlin
+class CountingSet<T>(val innerSet: MutableCollection<T> = HashSet())
+    : MutableCollection<T> by innerSet {	// 将 MutableCollection 的实现委托给 innerSet
+
+    var objectsAdd = 0
+
+    // 不使用委托，提供一个不同的实现
+    override fun add(element: T): Boolean {
+        objectsAdd++;
+        return innerSet.add(element)
+    }
+
+    override fun addAll(elements: Collection<T>): Boolean {
+        objectsAdd += elements.size
+        return innerSet.addAll(elements)
+    }
+}
+```
+
+### “object” 关键字
+
+**1、对象声明是定义单例的一种方式。**
+
+```kotlin
+object Payroll {
+    val allEmployees = arrayListOf<Any>()
+
+    fun calculateSalary() {
+        for (person in allEmployees) {
+            //...
+        }
+    }
+}
+
+Payroll.allEmployees.add("Tom")
+Payroll.calculateSalary()
+```
+
+使用对象来实现 Comparator
+
+```kotlin
+object CaseInsensitiveFileComparator : Comparator<File> {
+    override fun compare(o1: File, o2: File): Int {
+        return o1.path.compareTo(o2.path, ignoreCase = true)
+    }
+}
+
+println(CaseInsensitiveFileComparator.compare(File("User"), File("user")))
+```
+
+同样可以在类中声明对象，这样的对象同样只有一个单一实例：他们在每个容器类的实例中并不具有相同的实例。
+
+```kotlin
+data class Person(val name: String) {
+    object NameComparator : Comparator<Person> {
+        override fun compare(o1: Person, o2: Person): Int {
+            return o1.name.compareTo(o2.name)
+        }
+    }
+}
+```
+
+```kotlin
+data class Person(val name: String) {
+    object NameComparator : Comparator<Person> {
+        override fun compare(o1: Person, o2: Person): Int {
+            return o1.name.compareTo(o2.name)
+        }
+    }
+}
+```
+
+**2、伴生对象可以持有工厂方法和其他与这个类相关，但是在调用时并不依赖类实例的方法，它们的成员可以通过类名来访问。**
+
+工厂方法：
+
+```kotlin
+class User private constructor(val nickname: String) {
+    companion object {
+        fun newSubscribingUser(email: String) =
+                User(email.substringBefore("@"))
+
+        fun newFacebookUser(accountId: Int) =
+                User("id= $accountId")
+    }
+}
+```
+
+```kotlin
+val subscribingUser = User.newSubscribingUser("bob@kotlin.org")
+println(subscribingUser.nickname)
+```
+
+声明一个命名伴生对象
+
+```kotlin
+class Person(val name: String) {
+    companion object Loader{
+        fun fromJson(jsonText:String):Person = ...
+    }
+}
+```
+
+在伴生对象中实现接口
+
+```kotlin
+interface JSONFactory<T> {
+    fun fromJSON(jsonText: String): T
+}
+```
+
+```kotlin
+class Person(val name: String) {
+    companion object : JSONFactory<Person> {
+        override fun fromJSON(jsonText: String): Person = Person("Bob")
+    }
+}
+```
+
+```kotlin
+fun <T> loadFromJSON(factory: JSONFactory<T>): T {
+    return factory.fromJSON("")
+}
+```
+
+```kotlin
+loadFromJSON(Person) // 将伴生对象实例传入函数中，Person 类的名字被当做 JSONFactory 的实例
+```
+
+**3、对象表达式用来代替 Java 的匿名内部类**
+
+```kotlin
+    Thread(object : Runnable {
+        override fun run() {
+            
+        }
+    })
+```
