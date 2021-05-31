@@ -330,3 +330,85 @@ loadFromJSON(Person) // 将伴生对象实例传入函数中，Person 类的名�
         }
     })
 ```
+
+### "with" 函数
+
+可以用它对同一个对象执行多次操作，而不需要反复把对象的名称写出来
+
+```kotlin
+fun alphabet(): String {
+    val stringBuilder = StringBuilder()
+    return with(stringBuilder) {
+        for (letter in 'A'..'Z') {
+            append(letter)
+        }
+        append("\nNow I know the alphabet!")
+        toString() 	// 从 lambda 返回值
+    }
+}
+```
+
+with 返回的值是执行 lambda 代码的结果，该结果就是 lambda 中最后一个表达式（的值）。
+
+### ”apply“ 函数
+
+apply 始终会返回作为实参传递给它的对象。
+
+```kotlin
+fun alphabet() = StringBuilder().apply {
+    for (letter in 'A'..'Z') {
+        append(letter)
+    }
+    append("\nNow I know the alphabet!")
+}.toString()
+```
+
+### "let" 函数
+
+可以把调用 let 函数的可空对象，转变为非空类型
+
+```kotlin
+fun sendEmail(email: String) {
+    println(email)
+}
+
+fun main() {
+    val email: String? = ""
+
+  	// type mismatch
+    sendEmail(email)
+
+    email?.let {
+        sendEmail(email)
+    }
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
