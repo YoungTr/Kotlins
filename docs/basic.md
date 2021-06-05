@@ -433,13 +433,110 @@ operator fun Point.plus(other: Point): Point {
 ···
 ```
 
+### 定义一个简单高阶函数
 
+```kotlin
+fun twoAndThree(operate: (Int, Int) -> Int) {
+    val result = operate(2, 3)
+    println("The result is $result")
+}
 
+fun main() {
+    twoAndThree { a, b -> a + b }
+    twoAndThree { a, b -> a * b }
+}
+```
 
+### 简单的 “filter” 函数
 
+```kotlin
+fun String.filter(predicate: (Char) -> Boolean): String {
+    val sb = StringBuilder()
+    for (index in 0 until length) {
+        val element = get(index)
+        if (predicate(element)) {
+            sb.append(element)
+        }
+    }
+    return sb.toString()
+}
 
+fun main() {
+    println("ab1c".filter { it in 'a'..'z' })
+}
+```
 
+### 在 java 中使用函数类
 
+函数类型被声明为普通接口：一个函数类型的变量是 FunctionN 接口的一个现实。
+
+Java 8 的 lambda 会被自动转换为函数类型的值
+
+```kotlin
+UnitKt.twoAndThree((a, b) -> a + b);
+```
+
+在旧版的 Java 中，可以传递一个实现了函数接口中的 invoke 方法的匿名类的实例
+
+```kotlin
+    UnitKt.twoAndThree(
+        new Function2<Integer, Integer, Integer>() {
+          @Override
+          public Integer invoke(Integer a, Integer b) {
+            return a * b;
+          }
+        });
+```
+
+### 给函数类型的参数指定默认值
+
+```kotlin
+fun <T> Collection<T>.joinToString(separator: String = ", ",
+                                   prefix: String = "",
+                                   postfix: String = "",
+                                   transform: (T) -> String = { it.toString() }): String { // 声明一个以 lambda 为默认值的函数类型的参数
+    val result = StringBuilder(prefix)
+    for ((index, element) in this.withIndex()) {
+        if (index > 0) result.append(separator)
+        result.append(transform(element))   // 调用作为实参传递给 "transform" 形参的函数
+    }
+    result.append(postfix)
+    return result.toString()
+
+}
+
+fun main() {
+    val letters = listOf("Alpha", "Beta")
+    println(letters.joinToString()) // 使用默认的转换函数
+    // Alpha, Beta
+    println(letters.joinToString { it.toLowerCase() }) // 传递一个 lambda 作为参数
+    // alpha, beta
+    println(letters.joinToString(separator = "! ", postfix = "! ") {
+        it.toUpperCase() // 使用命名参数语法传递几个参数，包括一个 lambda
+    })
+    //
+}
+```
+
+### 使用函数类型的可空参数
+
+```kotlin
+fun <T> Collection<T>.joinToString(separator: String = ", ",
+                                    prefix: String = "",
+                                    postfix: String = "",
+                                    transform: ((T) -> String)? = null): String { // 声明一个函数类型的可空参数
+    val result = StringBuilder(prefix)
+    for ((index, element) in this.withIndex()) {
+        if (index > 0) result.append(separator)
+        val str = transform?.invoke(element)    // 调用 invoke 方法
+                ?: element.toString()   // 使用 Elvis 运算符处理回调没有被指定的情况
+        result.append(str)
+    }
+    result.append(postfix)
+    return result.toString()
+
+}
+```
 
 
 
