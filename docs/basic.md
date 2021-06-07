@@ -752,6 +752,14 @@ people.filter(fun (person): Boolean {
 
 `return` 从最近的使用 fun 关键字声明的函数返回。lambda 表达式没有使用 fun 关键字，所有 lambda 中的 `return` 从最外层的函数返回。匿名函数使用了 fun，`return` 表达式从匿名函数返回，而不是从最外层的函数返回。
 
+### 泛型函数和属性
+
+```kotlin
+fun <T> List<T>.slice(indicaes: IntRange): List<T>
+```
+
+
+
 
 
 
