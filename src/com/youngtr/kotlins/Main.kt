@@ -8,6 +8,6 @@ fun main(args: Array<String>) {
     println("Hello $name")
 
     val lest = listOf("1", "2", "3")
-    println(lest.max())
+    println(lest.maxOrNull())
     println(lest.last())
 }
